@@ -1,15 +1,17 @@
 use actix_web::{web, App, HttpRequest, HttpServer, Responder, HttpResponse};
+use actix_web::dev::Server;
 
-pub async fn run() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .route("/", web::get().to(greet))
-            .route("/hello/{name}", web::get().to(greet))
-            .route("/health_check", web::get().to(health_check))
-    })
-    .bind("127.0.0.1:8000")?
-    .run()
-    .await
+pub fn run() -> Result<Server, std::io::Error> {
+    let server = HttpServer::new(|| {
+            App::new()
+                .route("/", web::get().to(greet))
+                .route("/hello/{name}", web::get().to(greet))
+                .route("/health_check", web::get().to(health_check))
+        })
+        .bind("127.0.0.1:8000")?
+        .run();
+
+    Ok(server)
 }
 
 async fn greet(req: HttpRequest) -> impl Responder {
